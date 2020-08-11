@@ -38,6 +38,7 @@ import {
   IContainer,
   SessionSubStates,
   VSCodeApi,
+  FSUtils,
 } from './ioc-extras';
 import { BrowserAttacher } from './targets/browser/browserAttacher';
 import { ChromeLauncher } from './targets/browser/chromeLauncher';
@@ -83,6 +84,7 @@ import { LogPointCompiler } from './adapter/breakpoints/conditions/logPoint';
 import { OutFiles, VueComponentPaths } from './common/fileGlobList';
 import { IVueFileMapper, VueFileMapper } from './adapter/vueFileMapper';
 import { VSCodeRendererAttacher } from './targets/browser/vscodeRendererAttacher';
+import { FsUtils } from './common/fsUtils';
 
 /**
  * Contains IOC container factories for the extension. We use Inverisfy, which
@@ -256,6 +258,7 @@ export const createGlobalContainer = (options: {
   container.bind(ProcessEnv).toConstantValue(process.env);
   container.bind(Execa).toConstantValue(execa);
   container.bind(FS).toConstantValue(fsPromises);
+  container.bind(FSUtils).toConstantValue(new FsUtils(fsPromises));
   container
     .bind<ExtensionLocation>(ExtensionLocation)
     .toConstantValue(options.isRemote ? 'remote' : 'local');

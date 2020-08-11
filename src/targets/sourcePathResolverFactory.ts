@@ -9,9 +9,10 @@ import { DebugType } from '../common/contributionUtils';
 import { NodeSourcePathResolver } from './node/nodeSourcePathResolver';
 import { baseURL } from './browser/browserLaunchParams';
 import { BrowserSourcePathResolver } from './browser/browserPathResolver';
-import { IInitializeParams } from '../ioc-extras';
+import { IInitializeParams, FSUtils } from '../ioc-extras';
 import Dap from '../dap/api';
 import { IVueFileMapper } from '../adapter/vueFileMapper';
+import { FsUtils } from '../common/fsUtils';
 
 @injectable()
 export class SourcePathResolverFactory {
@@ -19,6 +20,7 @@ export class SourcePathResolverFactory {
     @inject(IInitializeParams) private readonly initializeParams: Dap.InitializeParams,
     @inject(ILogger) private readonly logger: ILogger,
     @inject(IVueFileMapper) private readonly vueMapper: IVueFileMapper,
+    @inject(FSUtils) private readonly fsUtils: FsUtils,
   ) {}
 
   public create(c: AnyLaunchConfiguration) {
@@ -28,6 +30,7 @@ export class SourcePathResolverFactory {
       c.type === DebugType.ExtensionHost
     ) {
       return new NodeSourcePathResolver(
+        this.fsUtils,
         {
           resolveSourceMapLocations: c.resolveSourceMapLocations,
           basePath: c.cwd,
@@ -40,6 +43,7 @@ export class SourcePathResolverFactory {
     } else {
       return new BrowserSourcePathResolver(
         this.vueMapper,
+        this.fsUtils,
         {
           resolveSourceMapLocations: c.resolveSourceMapLocations,
           baseUrl: baseURL(c),

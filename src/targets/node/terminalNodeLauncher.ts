@@ -15,9 +15,10 @@ import { EventEmitter } from '../../common/events';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
 import { injectable, inject } from 'inversify';
-import { FS, FsPromises } from '../../ioc-extras';
+import { FS, FsPromises, FSUtils } from '../../ioc-extras';
 import { INodeBinaryProvider, NodeBinaryProvider, NodeBinary } from './nodeBinaryProvider';
 import { ILogger } from '../../common/logging';
+import { FsUtils } from '../../common/fsUtils';
 
 class VSCodeTerminalProcess implements IProgram {
   public readonly stopped: Promise<IStopMetadata>;
@@ -68,8 +69,9 @@ export class TerminalNodeLauncher extends NodeLauncherBase<ITerminalLaunchConfig
     @inject(INodeBinaryProvider) pathProvider: NodeBinaryProvider,
     @inject(ILogger) logger: ILogger,
     @inject(FS) private readonly fs: FsPromises,
+    @inject(FSUtils) fsUtils: FsUtils,
   ) {
-    super(pathProvider, logger);
+    super(pathProvider, logger, fsUtils);
   }
 
   /**

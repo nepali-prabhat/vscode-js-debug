@@ -35,6 +35,8 @@ import { NodeSourcePathResolver } from './nodeSourcePathResolver';
 import { INodeTargetLifecycleHooks, NodeTarget } from './nodeTarget';
 import { IProgram } from './program';
 import { bootloaderDefaultPath } from './watchdogSpawn';
+import { FsUtils } from '../../common/fsUtils';
+import { FSUtils } from '../../ioc-extras';
 
 /**
  * Telemetry received from the nested process.
@@ -122,6 +124,7 @@ export abstract class NodeLauncherBase<T extends AnyNodeConfiguration> implement
   constructor(
     @inject(INodeBinaryProvider) private readonly pathProvider: NodeBinaryProvider,
     @inject(ILogger) protected readonly logger: ILogger,
+    @inject(FSUtils) protected readonly fsUtils: FsUtils,
   ) {}
 
   /**
@@ -147,6 +150,7 @@ export abstract class NodeLauncherBase<T extends AnyNodeConfiguration> implement
       context,
       logger,
       pathResolver: new NodeSourcePathResolver(
+        this.fsUtils,
         {
           resolveSourceMapLocations: resolved.resolveSourceMapLocations,
           basePath: resolved.cwd,
